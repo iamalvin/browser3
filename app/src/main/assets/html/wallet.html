@@ -1,0 +1,140 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="file:///android_asset/css/purecss.min.css"/>
+    <title>Browser3 Light Wallet</title>
+    <style>
+            .center-text{
+                text-align:center;
+            }
+            .center-content{
+                justify-content:center;
+            }
+
+    </style>
+</head>
+
+<body>
+<div class="Wallet Title Container">
+    <h1 class="center-text center-content">Browser3 Light Wallet</h1>
+</div>
+
+<div class="center-text center-content" id="loading">
+    <h1>
+        <small>Loading...</small>
+    </h1>
+</div>
+
+<div class="no-wallet container" id="no-wallet" style="display:none;">
+    <div style="justify-content:center; text-align:center;">
+        <h2>Create A Browser3 Vault</h2>
+        <div>
+            <a class="pure-button" id="newVault">Create New Vault</a>
+        </div>
+    </div>
+</div>
+
+<div class="wallet container" id="wallet" style="display:none;">
+    <div>
+        <h2>Full Address</h2>
+        <div>
+            <h4 id="coinbase"></h4>
+            <div id="inGetAddress" class="address"></div>
+        </div>
+    </div>
+
+    <div>
+        <form class="pure-form pure-form-aligned">
+            <fieldset>
+                <legend>Send Ether</legend>
+
+                <div class="pure-control-group">
+                    <label for="sendFrom">From: </label>
+                    <select id="sendFrom" class="userAddr"></select>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="sendTo">To: </label>
+                    <input type="text" size="40" id="sendTo"/>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="sendAmount">Amount to send in Ether: </label>
+                    <input type="number" id="sendAmount"/>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="gasPrice">Gas Price in Gwei Default is (22 Gwei): </label>
+                    <input type="number" id="gasPrice" value="22">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="gas">Gas Limit default: (50000): </label>
+                    <input type="number" id="gas" value="50000">
+                </div>
+
+                <div class="pure-controls">
+                    <a class="pure-button pure-button-primary" id="sendEth">Send Ether</a>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <div>
+        <form class="pure-form pure-form-aligned">
+            <fieldset>
+                <legend>Function Call</legend>
+
+                <div class="pure-control-group">
+                    <label for="contractCaller">Caller: </label>
+                    <select id="contractCaller" class="userAddr"></select>
+                </div>
+                <div class="pure-control-group">
+                    <label for="contractAddr">Contract Address: </label>
+                    <input type="text" id="contractAddr"/>
+                </div>
+                <div class="pure-control-group">
+                    <label for="contractAbi">Contract ABI: </label>
+                    <input type="text" id="contractAbi"/>
+                </div>
+                <div class="pure-control-group">
+                    <label for="functionName">Function Name: </label>
+                    <input type="text" id="functionName"/>
+                </div>
+                <div class="pure-control-group">
+                    <label for="functionArgs">Function Arguments: </label>
+                    <input type="text" id="functionArgs"/>
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="contractSendAmount">Value (Ether): </label>
+                    <input type="text" id="contractSendAmount">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="contractGasPrice">Gas Price in Gwei Default is (22 Gwei): </label>
+                    <input type="number" id="contractGasPrice" value="22">
+                </div>
+
+                <div class="pure-control-group">
+                    <label for="contractGas">Gas Limit default: (100000): </label>
+                    <input type="number" id="contractGas" value="100000">
+                </div>
+
+                <div class="pure-controls">
+                    <a class="pure-button pure-button-primary" id="functionCall">Call Contract</a>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <h3>Keep enough for transactions only. This is a browser First... not a Wallet</h3>
+</div>
+
+<script id="browser3Bundle"
+        src="file:///android_asset/js/browser3Bundle.eth-lightwallet.hooked-web3-provider.js"
+        type="text/javascript"></script>
+<script src="file:///android_asset/js/jquery.3.2.1.min.js" type="text/javascript"></script>
+<script src="file:///android_asset/js/wallet.js" type="text/javascript"></script>
+</body>
+</html>
