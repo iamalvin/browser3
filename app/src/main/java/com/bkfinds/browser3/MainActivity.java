@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 if (url.equals("file:///android_asset/html/wallet.html")) {
-                    ((EditText) findViewById(R.id.editURL)).setText("Wallet");
+                    ((EditText) findViewById(R.id.editURL)).setText("Enter dapp url here.");
                 } else {
                     ((EditText) findViewById(R.id.editURL)).setText(url);
                 }
