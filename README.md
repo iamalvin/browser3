@@ -28,5 +28,5 @@ If you can help browser3 would appreciate.
 There's dapp testing, haven't really managed much.
 I'd appreciate a look into the inner workings, see if there's a security issue 
 
-##License
+## License
 The license is MIT. 
