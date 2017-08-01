@@ -136,7 +136,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                ((EditText) view.findViewById(R.id.editURL)).setText(url);
+                if (url.equals("file:///android_asset/html/wallet.html")) {
+                    ((EditText) findViewById(R.id.editURL)).setText("Wallet");
+                } else {
+                    ((EditText) findViewById(R.id.editURL)).setText(url);
+                }
             }
 
             @Override
@@ -197,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button goButton = (Button) findViewById(R.id.goButton);
         editURL = (EditText) findViewById(R.id.editURL);
+        editURL.setSelectAllOnFocus(true);
 
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override

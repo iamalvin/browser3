@@ -7,7 +7,8 @@
     <TextView
         android:id="@+id/confirmation_info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_margin="0.5dp" />
 
     <EditText
         android:id="@+id/confirmation_input"

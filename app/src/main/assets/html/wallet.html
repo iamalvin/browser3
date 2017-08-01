@@ -10,7 +10,10 @@
             .center-content{
                 justify-content:center;
             }
-
+            .container {
+                margin: 5px;
+                padding:5px;
+            }
     </style>
 </head>
 
@@ -19,8 +22,8 @@
     <h1 class="center-text center-content">Browser3 Light Wallet</h1>
 </div>
 
-<div class="center-text center-content" id="loading">
-    <h1>
+<div id="loading">
+    <h1 class="center-text center-content">
         <small>Loading...</small>
     </h1>
 </div>
@@ -35,7 +38,7 @@
 </div>
 
 <div class="wallet container" id="wallet" style="display:none;">
-    <div>
+    <div class="center-text center-content">
         <h2>Full Address</h2>
         <div>
             <h4 id="coinbase"></h4>
@@ -44,85 +47,94 @@
     </div>
 
     <div>
-        <form class="pure-form pure-form-aligned">
+        <form class="pure-form pure-form-aligned bform">
             <fieldset>
-                <legend>Send Ether</legend>
+                <h3 class="center-text center-content">Send Ether</h3>
 
                 <div class="pure-control-group">
                     <label for="sendFrom">From: </label>
-                    <select id="sendFrom" class="userAddr"></select>
+                    <select id="sendFrom" class="userAddr pure-input-1"></select>
                 </div>
 
                 <div class="pure-control-group">
                     <label for="sendTo">To: </label>
-                    <input type="text" size="40" id="sendTo"/>
+                    <input placeholder="send address" class="pure-input-1" type="text" size="40"
+                           id="sendTo"/>
                 </div>
 
                 <div class="pure-control-group">
                     <label for="sendAmount">Amount to send in Ether: </label>
-                    <input type="number" id="sendAmount"/>
+                    <input placeholder="0" class="pure-input-1" type="number" id="sendAmount"/>
                 </div>
 
                 <div class="pure-control-group">
                     <label for="gasPrice">Gas Price in Gwei Default is (22 Gwei): </label>
-                    <input type="number" id="gasPrice" value="22">
+                    <input type="number" placeholder="0" class="pure-input-1" id="gasPrice"
+                           value="22">
                 </div>
 
                 <div class="pure-control-group">
                     <label for="gas">Gas Limit default: (50000): </label>
-                    <input type="number" id="gas" value="50000">
+                    <input class="pure-input-1" type="number" id="gas" value="50000">
                 </div>
 
                 <div class="pure-controls">
-                    <a class="pure-button pure-button-primary" id="sendEth">Send Ether</a>
+                    <a class="pure-input-1 pure-button pure-button-primary" id="sendEth">Send
+                        Ether</a>
                 </div>
             </fieldset>
         </form>
     </div>
 
     <div>
-        <form class="pure-form pure-form-aligned">
+        <form class="pure-form pure-form-aligned bform">
             <fieldset>
-                <legend>Function Call</legend>
+                <h3 class="center-text center-content">Function Call</h3>
 
                 <div class="pure-control-group">
                     <label for="contractCaller">Caller: </label>
-                    <select id="contractCaller" class="userAddr"></select>
+                    <select id="contractCaller" class="userAddr pure-input-1"></select>
                 </div>
                 <div class="pure-control-group">
                     <label for="contractAddr">Contract Address: </label>
-                    <input type="text" id="contractAddr"/>
+                    <input class="pure-input-1" placeholder="Contract Address" type="text"
+                           id="contractAddr"/>
                 </div>
                 <div class="pure-control-group">
                     <label for="contractAbi">Contract ABI: </label>
-                    <input type="text" id="contractAbi"/>
+                    <input class="pure-input-1" placeholder="Contract ABI" type="text"
+                           id="contractAbi"/>
                 </div>
                 <div class="pure-control-group">
                     <label for="functionName">Function Name: </label>
-                    <input type="text" id="functionName"/>
+                    <input class="pure-input-1" placeholder="Function Name" type="text"
+                           id="functionName"/>
                 </div>
                 <div class="pure-control-group">
                     <label for="functionArgs">Function Arguments: </label>
-                    <input type="text" id="functionArgs"/>
+                    <input class="pure-input-1" placeholder="Function Arguments" type="text"
+                           id="functionArgs"/>
                 </div>
 
                 <div class="pure-control-group">
                     <label for="contractSendAmount">Value (Ether): </label>
-                    <input type="text" id="contractSendAmount">
+                    <input class="pure-input-1" placeholder="0" type="number"
+                           id="contractSendAmount">
                 </div>
 
                 <div class="pure-control-group">
                     <label for="contractGasPrice">Gas Price in Gwei Default is (22 Gwei): </label>
-                    <input type="number" id="contractGasPrice" value="22">
+                    <input class="pure-input-1" type="number" id="contractGasPrice" value="22">
                 </div>
 
                 <div class="pure-control-group">
                     <label for="contractGas">Gas Limit default: (100000): </label>
-                    <input type="number" id="contractGas" value="100000">
+                    <input class="pure-input-1" type="number" id="contractGas" value="100000">
                 </div>
 
                 <div class="pure-controls">
-                    <a class="pure-button pure-button-primary" id="functionCall">Call Contract</a>
+                    <a class="pure-input-1 pure-button pure-button-primary" id="functionCall">Call
+                        Contract</a>
                 </div>
             </fieldset>
         </form>

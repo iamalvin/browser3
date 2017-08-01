@@ -68,6 +68,7 @@ var factory = function factory(Web3) {
       var host = _ref.host;
       var transaction_signer = _ref.transaction_signer;
       var approve_transaction = _ref.approve_transaction;
+      var save_transaction = _ref.save_transaction;
 
       _classCallCheck(this, HookedWeb3Provider);
 
@@ -75,6 +76,7 @@ var factory = function factory(Web3) {
 
       this.transaction_signer = transaction_signer;
       this.approve_transaction = approve_transaction;
+      this.save_transaction = save_transaction;
 
       // Cache of the most up to date transaction counts (nonces) for each address
       // encountered by the web3 provider that's managed by the transaction signer.
@@ -100,6 +102,8 @@ var factory = function factory(Web3) {
             }
 		});
 
+
+
         var finishedWithRewrite = function finishedWithRewrite() {
           return _get(Object.getPrototypeOf(HookedWeb3Provider.prototype), "send", _this).call(_this, payload, callback);
         };
@@ -116,9 +120,14 @@ var factory = function factory(Web3) {
       value: function sendAsync(payload, callback) {
         var _this2 = this;
 
+        var amended_callback = function(err, response){
+		    if (err) console.log(JSON.stringify(err));
+		    console.log(JSON.stringify(response));
+		    callback(err, response);
+		}
 
         var finishedWithRewrite = function finishedWithRewrite() {
-          _get(Object.getPrototypeOf(HookedWeb3Provider.prototype), "sendAsync", _this2).call(_this2, payload, callback);
+          _get(Object.getPrototypeOf(HookedWeb3Provider.prototype), "sendAsync", _this2).call(_this2, payload, amended_callback);
         };
 
         var requests = payload;
@@ -252,6 +261,7 @@ var factory = function factory(Web3) {
               session_nonces[sender] = final_nonce + 1;
               _this3.global_nonces[sender] = final_nonce + 1;
 
+
               payload.method = "eth_sendRawTransaction";
               payload.params = [raw_tx];
               return next();
@@ -294,9 +304,10 @@ browser3.lightwallet = lightwallet;
 //start browser utils
 browser3.setWeb3Provider = function(keystore){
     var web3Provider = new HookedWeb3Provider({
-        host: "https://parity.bkfinds.com/browser3.jsonrpc",
+        host: "https://mainnet.infura.io/KQVpBo7jJIBfKQLFg60S",
         transaction_signer: keystore,
-        approve_transaction: browser3.confirmTransaction
+        approve_transaction: browser3.confirmTransaction,
+        save_transaction: browser3.saveTransaction
     });
     web3.setProvider(web3Provider)
 }
@@ -329,6 +340,10 @@ browser3.newAddresses = function(password, num=1){
     })
 }
 
+browser3.saveTransaction = function(tx_params){
+    console.log(tx_params);
+}
+
 browser3.getAddressesInfo = function (){
     if(!browser3.keystoreLoaded){
         alert("No wallet loaded, generate a wallet with our browser(experimental)");
@@ -358,7 +373,7 @@ browser3.getAddressesInfo = function (){
                 var coinbaseString = JSON.stringify(browser3.global_address_info[browser3.global_addresses[0]]);
                 b3JSI.showCoinbase(coinbaseString);
             } else {
-                var coinbaseString = JSON.stringify({"address": addresses[0], "balance": "loading...", "nonce":"loading..."});
+                var coinbaseString = JSON.stringify({"address": browser3.coinbase, "balance": "loading...", "nonce":"loading..."});
                 b3JSI.showCoinbase(coinbaseString);
             }
         }
@@ -371,13 +386,13 @@ browser3.passwordProvider = function (callback){
 }
 
 browser3.truncateAddress = function (addr){
-    var addr = addr.substr(0, 6) + "..." + addr.substr(-7, -1);
+    var addr = addr.substr(0, 6) + "..." + addr.substr(-7, 7);
     return addr;
 }
 
 browser3.confirmTransaction = function(txParams, cb){
-    var trunc_from = txParams.from.substr(0, 6) + "..." + txParams.from.substr(-7, -1);
-    var trunc_to = txParams.to.substr(0, 6) + "..." + txParams.to.substr(-7, -1);
+    var trunc_from = txParams.from.substr(0, 6) + "..." + txParams.from.substr(-7, 7);
+    var trunc_to = txParams.to.substr(0, 6) + "..." + txParams.to.substr(-7, 7);
     var trunc_data = txParams.data ? (txParams.data.substr(0, 6) + "...") : "no data";
 
     var h_value = txParams.value ? parseInt(txParams.value, 16) : "empty value";
@@ -420,7 +435,6 @@ browser3.gettingAddressesEvent = browser3.makeEvent("getting addresses");
 browser3.keystoreLoaded = browser3.loadKeystoreFromStorage();
 
 if(browser3.keystoreLoaded){
-
     function fixScriptsSoTheyAreExecuted(el) {
         var scripts = el.querySelectorAll('script'),
         script, fixedScript, i, len;

@@ -23,18 +23,21 @@
                 android:id="@+id/walletButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="-2dp"
                 android:text="Wallet" />
 
             <EditText
                 android:id="@+id/editURL"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"></EditText>
+                android:layout_weight="1"
+                android:maxLines="1" />
 
             <Button
                 android:id="@+id/goButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="-2dp"
                 android:text="Go" />
 
         </LinearLayout>
@@ -45,5 +48,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/footerLayout"
-        android:scrollbars="none"></WebView>
+        android:scrollbars="none" />
 </RelativeLayout>

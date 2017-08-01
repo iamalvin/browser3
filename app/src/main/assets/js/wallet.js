@@ -52,7 +52,7 @@ $(document).ready(function(){
     //finished adding event listeners
     refreshAddresses();
 
-    window.setInterval(refreshAddresses, 30000);
+    window.setInterval(refreshAddresses, 15000);
 
     if (browser3.global_addresses.length <= 0){
         $('#loading').hide();
@@ -84,9 +84,9 @@ $(document).ready(function(){
             var toAddr = $("#sendTo").val();
             var value = $("#sendAmount").val();
             var weiValue = value * (10 ** 18);
-            var gasPrice = $("gasPrice").val();
+            var gasPrice = $("#gasPrice").val();
             var weiGasPrice =  gasPrice * (10 ** 9);
-            var gas = $("gas").val();
+            var gas = $("#gas").val();
             web3.eth.sendTransaction(
             {   from: fromAddr,
                 to: toAddr,
@@ -94,8 +94,9 @@ $(document).ready(function(){
                 gasPrice: weiGasPrice,
                 gas: gas
             }, function (err, txhash) {
-                alert('error: ' + err)
-                alert('txhash: ' + txhash)
+                if(err) console.log('error: ' + err);
+                if(txhash) console.log('txhash: ' + txhash);
+                //b3JSI.saveTransaction(fromAddr, toAddr, weiValue, gas, weiGasPrice);
             });
         });
 
@@ -109,10 +110,9 @@ $(document).ready(function(){
             var args = JSON.parse('[' + document.getElementById('functionArgs').value + ']');
             var value = $("#contractSendAmount").val();
             var weiValue = value * (10 ** 18);
-
-            var gasPrice = $("contractGasPrice").val();
+            var gasPrice = $("#contractGasPrice").val();
             var weiGasPrice =  gasPrice * (10 ** 9);
-            var gas = $("contractGas").val();
+            var gas = $("#contractGas").val();
 
             args.push({from: fromAddr, value: value, gasPrice: gasPrice, gas: gas})
             var callback = function(err, txhash) {
