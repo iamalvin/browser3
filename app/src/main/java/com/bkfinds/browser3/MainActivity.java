@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.JsPromptResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -62,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
 
         webView = (WebView) findViewById(R.id.goView);
         webView.getSettings().setJavaScriptEnabled(true);
+
+        CookieManager cookieManager = CookieManager.getInstance();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            cookieManager.setAcceptThirdPartyCookies(webView, true);
+        } else {
+            cookieManager.setAcceptCookie(true);
+        }
 
 
         webView.addJavascriptInterface(new browser3KeyStoreGetter(this), "browser3KeyStoreGetter");
