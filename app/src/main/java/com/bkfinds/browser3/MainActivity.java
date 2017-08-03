@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.JsPromptResult;
 import android.webkit.WebChromeClient;
@@ -21,17 +25,24 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends AppCompatActivity {
+    public static final String PREFS_NAME = "browser3_main_prefs";
+    final Context b3 = this;
 
     EditText editURL;
     WebView webView;
-
+    ProgressBar loadingBar;
+    TextView loadingTxt;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -40,11 +51,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ActionBar actionBar = getSupportActionBar();
-        final Context b3 = this;
 
         if (actionBar != null) {
             actionBar.hide();
         }
+
+
+        loadingBar = (ProgressBar) findViewById(R.id.loadingbar);
+        loadingTxt = (TextView) findViewById(R.id.loadingtxt);
 
         webView = (WebView) findViewById(R.id.goView);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -54,8 +68,21 @@ public class MainActivity extends AppCompatActivity {
         webView.addJavascriptInterface(new browser3FullKeyStore(this), "browser3FullKeyStore");
         webView.addJavascriptInterface(new b3JSI(this), "b3JSI");
 
-
         webView.setWebChromeClient(new WebChromeClient() {
+
+            public void onProgressChanged(WebView view, int progress) {
+                if (progress < 100 && loadingBar.getVisibility() == ProgressBar.GONE) {
+                    loadingBar.setVisibility(ProgressBar.VISIBLE);
+                    loadingTxt.setVisibility(View.VISIBLE);
+                }
+
+                loadingBar.setProgress(progress);
+                if (progress == 100) {
+                    loadingBar.setVisibility(ProgressBar.GONE);
+                    loadingTxt.setVisibility(View.GONE);
+                }
+            }
+
             @Override
             public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
                 if (defaultValue.equalsIgnoreCase("password")) {
@@ -207,6 +234,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String url = editURL.getText().toString();
+                if (isUrl(url)) {
+                    if (!url.startsWith("ftp") && !url.startsWith("http")) {
+                        url = "http://" + url;
+                    }
+                } else {
+                    String prefix = "https://duckduckgo.com/?q=";
+                    url = prefix + url.replace(" ", "+");
+                }
                 webView.loadUrl(url);
             }
         });
@@ -232,6 +267,47 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.change_rpc_node:
+                final CharSequence nodes[] = new CharSequence[]{"Mainnet (Infura)", "Ropsten (Infura)", "Kovan (Infura)", "Rinkeby (Infura)"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Pick an RPC node, Mainnet(Infura) default;");
+                builder.setItems(nodes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String chosen_node = nodes[which].toString();
+                        Log.d("chosen node", chosen_node);
+
+                        SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString("current_node", chosen_node);
+                        editor.commit();
+
+                        String node_from_prefs = pref.getString("current_node", nodes[0].toString());
+                        Toast.makeText(b3, node_from_prefs, Toast.LENGTH_SHORT).show();
+
+                        webView.loadUrl("javascript:window.location.reload();");
+                    }
+                });
+                builder.show();
+                break;
+
+            default:
+                break;
+        }
+        return true;
+    }
+
     private void attachScriptFile(WebView view, String src, String id) {
         Log.d("script being attached", id);
         Log.d("script source", src);
@@ -245,5 +321,17 @@ public class MainActivity extends AppCompatActivity {
                         "parent.appendChild(script);" +
                         "})();"
         );
+    }
+
+    private boolean isUrl(String text) {
+        final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
+
+        Pattern p = Pattern.compile(URL_REGEX);
+        Matcher m = p.matcher(text);
+        if (m.find()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

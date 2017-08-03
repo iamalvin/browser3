@@ -304,7 +304,7 @@ browser3.lightwallet = lightwallet;
 //start browser utils
 browser3.setWeb3Provider = function(keystore){
     var web3Provider = new HookedWeb3Provider({
-        host: "https://mainnet.infura.io/KQVpBo7jJIBfKQLFg60S",
+        host: b3JSI.getCurrentNode(),
         transaction_signer: keystore,
         approve_transaction: browser3.confirmTransaction,
         save_transaction: browser3.saveTransaction

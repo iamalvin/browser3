@@ -13,6 +13,7 @@
         android:layout_alignParentBottom="true"
         android:gravity="center">
 
+
         <LinearLayout
             android:id="@+id/footerLinearLayout"
             android:layout_width="match_parent"
@@ -48,5 +49,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/footerLayout"
-        android:scrollbars="none" />
+        android:scrollbars="none">
+
+        <requestFocus />
+
+        <ProgressBar
+            android:id="@+id/loadingbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:padding="2dip"></ProgressBar>
+
+
+        <TextView
+            android:id="@+id/loadingtxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/loadingbar"
+            android:text="Loading, please wait . . ."
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#000000" />
+    </WebView>
 </RelativeLayout>
