@@ -41,7 +41,7 @@ class browser3FullKeyStore {
     }
 
     @JavascriptInterface
-    public Boolean saveKeyStore(String serialized_key_store) {
+    public Boolean saveKeyStore(final String serialized_key_store) {
         a.runOnUiThread(new Runnable() {
             public void run() {
                 webView = (WebView) a.findViewById(R.id.goView);
@@ -49,11 +49,12 @@ class browser3FullKeyStore {
 
                 if (!url.equals("file:///android_asset/html/wallet.html")) {
                     throw new IllegalArgumentException(url);
+                } else {
+                    String keystore_file_name = getKeystoreFileName(thisContext);
+                    writeToFile(serialized_key_store, thisContext, keystore_file_name);
                 }
             }
         });
-        String keystore_file_name = getKeystoreFileName(thisContext);
-        writeToFile(serialized_key_store, thisContext, keystore_file_name);
         return true;
     }
 
