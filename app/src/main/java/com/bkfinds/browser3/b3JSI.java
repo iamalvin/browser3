@@ -8,6 +8,8 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -73,5 +75,16 @@ class b3JSI {
         String node_url = node_url_map.get(node_from_prefs);
         Toast.makeText(a, node_from_prefs, Toast.LENGTH_SHORT).show();
         return node_url;
+    }
+
+    @JavascriptInterface
+    public void scanForAddress() {
+        IntentIntegrator integrator = new IntentIntegrator(a);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+        integrator.setPrompt("Scan QR Code");
+        integrator.setCameraId(0);  // Use a specific camera of the device
+        integrator.setBeepEnabled(false);
+        integrator.setBarcodeImageEnabled(true);
+        integrator.initiateScan();
     }
 }
