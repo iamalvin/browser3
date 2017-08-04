@@ -144,7 +144,8 @@ $(document).ready(function(){
             var weiGasPrice =  gasPrice * (10 ** 9);
             var gas = $("#contractGas").val();
 
-            args.push({from: fromAddr, value: value, gasPrice: gasPrice, gas: gas})
+            args.push({from: fromAddr, value: value, gasPrice: gasPrice, gas: gas});
+
             var callback = function(err, txhash) {
                 alert('error: ' + err)
                 alert('txhash: ' + txhash)
