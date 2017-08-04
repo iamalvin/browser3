@@ -56,10 +56,16 @@
                     <select id="sendFrom" class="userAddr pure-input-1"></select>
                 </div>
 
-                <div class="pure-control-group">
-                    <label for="sendTo">To: </label>
-                    <input placeholder="send address" class="pure-input-1" type="text" size="40"
-                           id="sendTo"/>
+                <div class="pure-control-group pure-u-1">
+                    <div class="pure-u-3-4">
+                        <label for="sendTo">To: </label>
+                        <input placeholder="send address" class="pure-input-1 toAddress" type="text"
+                               id="sendTo"/>
+                    </div>
+                    <div class="pure-u-1-4">
+                        <a id="scanForAddress"
+                           class="pure-input-1 pure-button pure-button-primary scanForAddress">scan</a>
+                    </div>
                 </div>
 
                 <div class="pure-control-group">
@@ -95,10 +101,16 @@
                     <label for="contractCaller">Caller: </label>
                     <select id="contractCaller" class="userAddr pure-input-1"></select>
                 </div>
-                <div class="pure-control-group">
-                    <label for="contractAddr">Contract Address: </label>
-                    <input class="pure-input-1" placeholder="Contract Address" type="text"
-                           id="contractAddr"/>
+                <div class="pure-control-group pure-u-1">
+                    <div class="pure-u-3-4">
+                        <label for="contractAddr">Contract Address: </label>
+                        <input class="pure-input-1 toAddress" placeholder="Contract Address"
+                               type="text" id="contractAddr"/>
+                    </div>
+                    <div class="pure-u-1-4">
+                        <a id="scanForContractAddress"
+                           class="pure-input-1 pure-button pure-button-primary scanForAddress">scan</a>
+                    </div>
                 </div>
                 <div class="pure-control-group">
                     <label for="contractAbi">Contract ABI: </label>

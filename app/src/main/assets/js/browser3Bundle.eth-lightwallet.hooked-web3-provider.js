@@ -403,7 +403,6 @@ browser3.getAddressesInfo = function (){
                 }
             });
         });
-        //console.log(web3.eth.coinbase);
 
         if (browser3.global_address_info != {}){
             if (browser3.global_address_info[browser3.global_addresses[0]]){
@@ -457,6 +456,8 @@ browser3.handleCallbacks = function(err, response){
         console.log(err)
     }
     if (response){
+        console.log(JSON.stringify(response));
+
         if (response.result){
             var callResult = response.result;
             if (callResult.length >= 60){
@@ -491,34 +492,35 @@ browser3.gettingAddressesEvent = browser3.makeEvent("getting addresses");
 
 browser3.keystoreLoaded = browser3.loadKeystoreFromStorage();
 
-if(browser3.keystoreLoaded){
-    function fixScriptsSoTheyAreExecuted(el) {
-        var scripts = el.querySelectorAll('script'),
-        script, fixedScript, i, len;
+function fixScriptsSoTheyAreExecuted(el) {
+    var scripts = el.querySelectorAll('script'),
+    script, fixedScript, i, len;
 
-        for (i = 0, len = scripts.length; i < len; i++) {
-            script = scripts[i];
-            if (script.id != "browser3Bundle"){
-                fixedScript = document.createElement('script');
+    for (i = 0, len = scripts.length; i < len; i++) {
+        script = scripts[i];
+        if (script.id != "browser3Bundle"){
+            fixedScript = document.createElement('script');
 
-                fixedScript.type = script.type;
-                if (script.innerHTML) {
-                    fixedScript.innerHTML = script.innerHTML;
-                } else {
-                    fixedScript.src = script.src;
-                }
-                fixedScript.async = false;
-
-                script.parentNode.replaceChild(fixedScript, script);
+            fixedScript.type = script.type;
+            if (script.innerHTML) {
+                fixedScript.innerHTML = script.innerHTML;
+            } else {
+                fixedScript.src = script.src;
             }
+            fixedScript.async = false;
+
+            script.parentNode.replaceChild(fixedScript, script);
         }
     }
+}
 
+
+if(browser3.keystoreLoaded){
     var htmldoc = document.getElementsByTagName("html")[0];
     fixScriptsSoTheyAreExecuted(htmldoc);
     browser3.getAddressesInfo();
-    window.setInterval(browser3.getAddressesInfo, 30000);
+    window.setInterval(browser3.getAddressesInfo, 15000);
 
- } else {
+} else {
     alert("Welcome!. as no keystore is available, generate an anonymous account to continue browsing, use the wallet button below.")
- }
+}

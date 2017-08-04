@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -29,6 +30,9 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -282,10 +286,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Scanned: " + result.toString(), Toast.LENGTH_LONG).show();
+                String address;
+                String setAddresses;
+
+                if (result.getContents().startsWith("ethereum:")) {
+                    address = result.getContents().replace("ethereum:", "");
+                    setAddresses = "Javascript:$('.toAddress').val('" + address + "')";
+                    webView.loadUrl(setAddresses);
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.change_rpc_node:
-                final CharSequence nodes[] = new CharSequence[]{"Mainnet (Infura)", "Ropsten (Infura)", "Kovan (Infura)", "Rinkeby (Infura)"};
+                final CharSequence nodes[] = new CharSequence[]{"Mainnet (Infura)", "Ropsten (Infura)", "Rinkeby (Infura)"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Pick an RPC node, Mainnet(Infura) default;");

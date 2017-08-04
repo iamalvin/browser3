@@ -47,7 +47,7 @@ class browser3FullKeyStore {
         node_store_map.put("Mainnet (Infura)", "walletKeystore");
         node_store_map.put("Ropsten (Infura)", "ropstenWalletKeystore");
         node_store_map.put("Rinkeby (Infura)", "rinkebyWalletKeystore");
-        node_store_map.put("Kovan (Infura)", "kovanWalletKeystore");
+        //node_store_map.put("Kovan (Infura)", "kovanWalletKeystore");
 
         String file_name = node_store_map.get(node_from_prefs);
         return file_name;

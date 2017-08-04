@@ -13,8 +13,6 @@ function clearAddresses(){
 
 function refreshAddresses(){
     var gai = browser3.global_address_info;
-
-
     $(".address").html("");
     $(".userAddr").html("");
 
@@ -78,6 +76,10 @@ $(document).ready(function(){
         $('#loading').hide();
         $('#no-wallet').hide();
         $('#wallet').show();
+
+        $(".scanForAddress").click(function(){
+            b3JSI.scanForAddress();
+        });
 
         $("#sendEth").click(function(){
             var fromAddr = $("#sendFrom").val();
