@@ -46,6 +46,8 @@
         </div>
     </div>
 
+    <div class="pure-g transactions" id="transactions"></div>
+
     <div>
         <form class="pure-form pure-form-aligned bform">
             <fieldset>
@@ -56,9 +58,11 @@
                     <select id="sendFrom" class="userAddr pure-input-1"></select>
                 </div>
 
-                <div class="pure-control-group pure-u-1">
-                    <div class="pure-u-3-4">
+                <div class="pure-control-group pure-g">
+                    <div class="center-text pure-u-1">
                         <label for="sendTo">To: </label>
+                    </div>
+                    <div class="pure-u-3-4">
                         <input placeholder="send address" class="pure-input-1 toAddress" type="text"
                                id="sendTo"/>
                     </div>
@@ -101,9 +105,12 @@
                     <label for="contractCaller">Caller: </label>
                     <select id="contractCaller" class="userAddr pure-input-1"></select>
                 </div>
-                <div class="pure-control-group pure-u-1">
-                    <div class="pure-u-3-4">
+
+                <div class="pure-control-group pure-g">
+                    <div class="center-text pure-u-1">
                         <label for="contractAddr">Contract Address: </label>
+                    </div>
+                    <div class="pure-u-3-4">
                         <input class="pure-input-1 toAddress" placeholder="Contract Address"
                                type="text" id="contractAddr"/>
                     </div>
@@ -112,6 +119,7 @@
                            class="pure-input-1 pure-button pure-button-primary scanForAddress">scan</a>
                     </div>
                 </div>
+
                 <div class="pure-control-group">
                     <label for="contractAbi">Contract ABI: </label>
                     <input class="pure-input-1" placeholder="Contract ABI" type="text"

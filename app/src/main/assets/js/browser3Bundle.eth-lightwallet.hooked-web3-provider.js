@@ -456,22 +456,29 @@ browser3.handleCallbacks = function(err, response){
         console.log(err)
     }
     if (response){
-        console.log(JSON.stringify(response));
-
+        //console.log(JSON.stringify(response));
         if (response.result){
             var callResult = response.result;
-            if (callResult.length >= 60){
-                web3.eth.getTransactionReceipt(callResult, function (err, result){
-                    if(err){
-                        console.log(JSON.stringify(err));
-                    } else {
-                        console.log(JSON.stringify(result));
-                    }
-                });
+            if (callResult.length >= 66){
+                browser3.handleTransaction(callResult);
             }
         }
     }
 }
+
+browser3.handleTransaction = function(possibleTx){
+    web3.eth.getTransaction(possibleTx, function(err, res){
+        if (err) console.log("handle transaction error", err);
+        if (res) {
+            console.log("handle transaction response", JSON.stringify(res));
+            var allTransactions = JSON.parse(b3JSI.getTransactions());
+            allTransactions.push(res);
+            var transactionsString = JSON.stringify(allTransactions);
+            b3JSI.saveTransactions(transactionsString);
+        }
+    })
+}
+
 
 browser3.addListener = function(trigger, callback){
     document.addEventListener(trigger, callback);

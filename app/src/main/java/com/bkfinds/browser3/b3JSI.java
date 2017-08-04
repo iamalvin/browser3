@@ -13,6 +13,12 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,5 +92,87 @@ class b3JSI {
         integrator.setBeepEnabled(false);
         integrator.setBarcodeImageEnabled(true);
         integrator.initiateScan();
+    }
+
+    @JavascriptInterface
+    public boolean saveTransactions(String txString) {
+        String transaction_store_file_name = getStorageFileName(c);
+        writeToFile(txString, c, transaction_store_file_name);
+        return true;
+    }
+
+    @JavascriptInterface
+    public String getTransactions() {
+        String serialized_transactions;
+        String transaction_store_file_name = getStorageFileName(c);
+        serialized_transactions = getFromFile(c, transaction_store_file_name);
+        return serialized_transactions;
+    }
+
+    private String getStorageFileName(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String node_from_prefs = pref.getString("current_node", "Mainnet (Infura)");
+
+        Map<String, String> node_store_map = new HashMap<>();
+        node_store_map.put("Mainnet (Infura)", "walletTransactionStore");
+        node_store_map.put("Ropsten (Infura)", "ropstenWalletTransactionStore");
+        node_store_map.put("Rinkeby (Infura)", "rinkebyWalletTransactionStore");
+        //node_store_map.put("Kovan (Infura)", "kovanWalletTransactionStore");
+
+        String file_name = node_store_map.get(node_from_prefs);
+        return file_name;
+    }
+
+    private String getExplorerPrefix(String path) {
+        SharedPreferences pref = c.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String node_from_prefs = pref.getString("current_node", "Mainnet (Infura)");
+
+        Map<String, String> node_explorer_map = new HashMap<>();
+        node_explorer_map.put("Mainnet (Infura)", "https://etherscan.io");
+        node_explorer_map.put("Ropsten (Infura)", "https://ropsten.etherscan.io");
+        node_explorer_map.put("Rinkeby (Infura)", "https://rinkeby.etherscan.io");
+        //node_explorer_map.put("Kovan (Infura)", "https://kovan.etherscan.io");
+
+        String explorer_prefix = node_explorer_map.get(node_from_prefs);
+        String explorer = explorer_prefix + path;
+        return explorer;
+    }
+
+    private String getFromFile(Context context, String file_name) {
+        String ret = "";
+
+        try {
+            InputStream inputStream = context.openFileInput(file_name);
+
+            if (inputStream != null) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString;
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ((receiveString = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        } catch (FileNotFoundException e) {
+            writeToFile("[]", context, file_name);
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return ret;
+    }
+
+    private void writeToFile(String data, Context context, String file_name) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(file_name, Context.MODE_PRIVATE));
+            outputStreamWriter.write(data);
+            outputStreamWriter.close();
+        } catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
     }
 }

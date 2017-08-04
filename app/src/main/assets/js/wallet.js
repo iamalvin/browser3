@@ -34,6 +34,23 @@ function refreshAddresses(){
 
         $(".userAddr").append(addrAsOption);
     }
+
+    var allTransactions = JSON.parse(b3JSI.getTransactions());
+    allTransactions.reverse();
+
+    $("#transactions").html("");
+
+    var latest10 = allTransactions.slice(0, 11);
+    latest10.map(function(transaction){
+        var transactionData = "<fieldset class='fieldset'>"
+                            + "Transaction: <a href='" + b3JSI.getExplorerPrefix("/tx/") + transaction.hash + "'>" + browser3.truncateAddress(transaction.hash) + "</a><br/>"
+                            + " From: " + "<a href='" + b3JSI.getExplorerPrefix("/address/") + transaction.from + "'>Coinbase</a>"
+                            + " To: " + "<a href='" + b3JSI.getExplorerPrefix("/address/") + transaction.to + "'>" + transaction.to + "</a></br/>"
+                            + " of <b> Value: " + (new BigNumber(transaction.value).toNumber() / (10 ** 18)) + "</b>"
+                            + "</fieldset>";
+
+        $("#transactions").append(transactionData);
+    })
 }
 
 //finished adding event receivers
@@ -51,6 +68,7 @@ $(document).ready(function(){
     refreshAddresses();
 
     window.setInterval(refreshAddresses, 15000);
+
 
     if (browser3.global_addresses.length <= 0){
         $('#loading').hide();
