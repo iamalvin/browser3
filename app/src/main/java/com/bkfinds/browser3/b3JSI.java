@@ -109,21 +109,8 @@ class b3JSI {
         return serialized_transactions;
     }
 
-    private String getStorageFileName(Context context) {
-        SharedPreferences pref = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String node_from_prefs = pref.getString("current_node", "Mainnet (Infura)");
-
-        Map<String, String> node_store_map = new HashMap<>();
-        node_store_map.put("Mainnet (Infura)", "walletTransactionStore");
-        node_store_map.put("Ropsten (Infura)", "ropstenWalletTransactionStore");
-        node_store_map.put("Rinkeby (Infura)", "rinkebyWalletTransactionStore");
-        //node_store_map.put("Kovan (Infura)", "kovanWalletTransactionStore");
-
-        String file_name = node_store_map.get(node_from_prefs);
-        return file_name;
-    }
-
-    private String getExplorerPrefix(String path) {
+    @JavascriptInterface
+    public String getExplorerPrefix(String path) {
         SharedPreferences pref = c.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String node_from_prefs = pref.getString("current_node", "Mainnet (Infura)");
 
@@ -136,6 +123,20 @@ class b3JSI {
         String explorer_prefix = node_explorer_map.get(node_from_prefs);
         String explorer = explorer_prefix + path;
         return explorer;
+    }
+
+    private String getStorageFileName(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String node_from_prefs = pref.getString("current_node", "Mainnet (Infura)");
+
+        Map<String, String> node_store_map = new HashMap<>();
+        node_store_map.put("Mainnet (Infura)", "walletTransactionStore");
+        node_store_map.put("Ropsten (Infura)", "ropstenWalletTransactionStore");
+        node_store_map.put("Rinkeby (Infura)", "rinkebyWalletTransactionStore");
+        //node_store_map.put("Kovan (Infura)", "kovanWalletTransactionStore");
+
+        String file_name = node_store_map.get(node_from_prefs);
+        return file_name;
     }
 
     private String getFromFile(Context context, String file_name) {
