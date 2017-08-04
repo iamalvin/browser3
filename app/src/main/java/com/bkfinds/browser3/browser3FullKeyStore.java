@@ -74,6 +74,7 @@ class browser3FullKeyStore {
             }
         } catch (FileNotFoundException e) {
             writeToFile("", context, file_name);
+            ret = getFromFile(context, file_name);
         } catch (IOException e) {
             Log.e("login activity", "Can not read file: " + e.toString());
         }
