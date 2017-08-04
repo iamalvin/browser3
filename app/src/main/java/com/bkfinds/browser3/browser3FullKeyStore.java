@@ -3,8 +3,10 @@ package com.bkfinds.browser3;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -20,7 +22,13 @@ import static android.content.Context.MODE_PRIVATE;
 class browser3FullKeyStore {
     private static final String PREFS_NAME = "browser3_main_prefs";
     private Context thisContext;
-    browser3FullKeyStore(Context c) {
+    private AppCompatActivity a;
+    private Context c;
+    private WebView webView;
+
+    browser3FullKeyStore(AppCompatActivity parent_activity) {
+        a = parent_activity;
+        c = parent_activity.getBaseContext();
         thisContext = c;
     }
 
@@ -34,6 +42,16 @@ class browser3FullKeyStore {
 
     @JavascriptInterface
     public Boolean saveKeyStore(String serialized_key_store) {
+        a.runOnUiThread(new Runnable() {
+            public void run() {
+                webView = (WebView) a.findViewById(R.id.goView);
+                String url = webView.getUrl();
+
+                if (!url.equals("file:///android_asset/html/wallet.html")) {
+                    throw new IllegalArgumentException(url);
+                }
+            }
+        });
         String keystore_file_name = getKeystoreFileName(thisContext);
         writeToFile(serialized_key_store, thisContext, keystore_file_name);
         return true;
