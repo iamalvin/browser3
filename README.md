@@ -6,7 +6,7 @@ It was built with a slightly modified (hooked-web3-provider and eth-lightwallet)
 I'm reachable at [alvin.browser3@gmail.com](mailto:alvin.browser3@gmail.com)
 
 ## For Users
-It's available on [the browser3 release page as an apk](https://github.com/iamalvin/browser3/releases/download/v0.0.1/app-release.apk)
+It's available on [the browser3 release page as an apk](https://github.com/iamalvin/browser3/releases/download/v0.0.4-alpha/v0.0.4-alpha.apk)
 Setup is easy, but we cannot retrieve your account if your password is lost, so BE CAREFUL.
 
 It is in testing.
