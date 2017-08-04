@@ -112,6 +112,7 @@ $(document).ready(function(){
             var gasPrice = $("#gasPrice").val();
             var weiGasPrice =  gasPrice * (10 ** 9);
             var gas = $("#gas").val();
+
             web3.eth.sendTransaction(
             {   from: fromAddr,
                 to: toAddr,
@@ -120,7 +121,11 @@ $(document).ready(function(){
                 gas: gas
             }, function (err, txhash) {
                 if(err) console.log('error: ' + err);
-                if(txhash) console.log('txhash: ' + txhash);
+                if(txhash) {
+                    console.log('txhash: ' + txhash);
+                    alert("Sent, tx pending");
+                    $("#sendAmount").val("");
+                }
                 //b3JSI.saveTransaction(fromAddr, toAddr, weiValue, gas, weiGasPrice);
             });
         });
