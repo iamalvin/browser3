@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
             cookieManager.setAcceptCookie(true);
         }
 
-
         webView.addJavascriptInterface(new browser3KeyStoreGetter(this), "browser3KeyStoreGetter");
         webView.addJavascriptInterface(new browser3FullKeyStore(this), "browser3FullKeyStore");
         webView.addJavascriptInterface(new b3JSI(this), "b3JSI");

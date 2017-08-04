@@ -103,6 +103,7 @@ var factory = function factory(Web3) {
       var transaction_signer = _ref.transaction_signer;
       var approve_transaction = _ref.approve_transaction;
       var save_transaction = _ref.save_transaction;
+      var handle_callbacks = _ref.handle_callbacks;
 
       _classCallCheck(this, HookedWeb3Provider);
 
@@ -111,6 +112,7 @@ var factory = function factory(Web3) {
       this.transaction_signer = transaction_signer;
       this.approve_transaction = approve_transaction;
       this.save_transaction = save_transaction;
+      this.handle_callbacks = handle_callbacks;
 
       // Cache of the most up to date transaction counts (nonces) for each address
       // encountered by the web3 provider that's managed by the transaction signer.
@@ -136,8 +138,6 @@ var factory = function factory(Web3) {
             }
 		});
 
-
-
         var finishedWithRewrite = function finishedWithRewrite() {
           return _get(Object.getPrototypeOf(HookedWeb3Provider.prototype), "send", _this).call(_this, payload, callback);
         };
@@ -155,9 +155,8 @@ var factory = function factory(Web3) {
         var _this2 = this;
 
         var amended_callback = function(err, response){
-		    if (err) console.log(JSON.stringify(err));
-		    console.log(JSON.stringify(response));
 		    callback(err, response);
+		    _this2.handle_callbacks(err, response);
 		}
 
         var finishedWithRewrite = function finishedWithRewrite() {
@@ -332,6 +331,7 @@ browser3.global_address_info = {};
 browser3.global_addresses = [];
 browser3.coinbase;
 browser3.lightwallet = lightwallet;
+browser3.transactions = [];
 //end globals
 
 
@@ -341,7 +341,8 @@ browser3.setWeb3Provider = function(keystore){
         host: b3JSI.getCurrentNode(),
         transaction_signer: keystore,
         approve_transaction: browser3.confirmTransaction,
-        save_transaction: browser3.saveTransaction
+        save_transaction: browser3.saveTransaction,
+        handle_callbacks: browser3.handleCallbacks
     });
     web3.setProvider(web3Provider)
 }
@@ -375,8 +376,10 @@ browser3.newAddresses = function(password, num=1){
 }
 
 browser3.saveTransaction = function(tx_params){
-    console.log(tx_params);
+    //console.log(tx_params);
 }
+
+
 
 browser3.getAddressesInfo = function (){
     if(!browser3.keystoreLoaded){
@@ -446,6 +449,26 @@ browser3.confirmTransaction = function(txParams, cb){
         cb(null, result);
     } else {
         return result;
+    }
+}
+
+browser3.handleCallbacks = function(err, response){
+    if (err){
+        console.log(err)
+    }
+    if (response){
+        if (response.result){
+            var callResult = response.result;
+            if (callResult.length >= 60){
+                web3.eth.getTransactionReceipt(callResult, function (err, result){
+                    if(err){
+                        console.log(JSON.stringify(err));
+                    } else {
+                        console.log(JSON.stringify(result));
+                    }
+                });
+            }
+        }
     }
 }
 
