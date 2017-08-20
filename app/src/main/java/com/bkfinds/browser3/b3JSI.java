@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -34,7 +33,7 @@ class b3JSI {
         c = parent_activity.getBaseContext();
     }
 
-    @JavascriptInterface
+    @org.xwalk.core.JavascriptInterface
     public void showCoinbase(final String notification) {
         a.runOnUiThread(new Runnable() {
             public void run() {
@@ -67,7 +66,7 @@ class b3JSI {
         });
     }
 
-    @JavascriptInterface
+    @org.xwalk.core.JavascriptInterface
     public String getCurrentNode() {
         Map<String, String> node_url_map = new HashMap<>();
         node_url_map.put("Mainnet (Infura)", "https://mainnet.infura.io/KQVpBo7jJIBfKQLFg60S");
@@ -83,7 +82,7 @@ class b3JSI {
         return node_url;
     }
 
-    @JavascriptInterface
+    @org.xwalk.core.JavascriptInterface
     public void scanForAddress() {
         IntentIntegrator integrator = new IntentIntegrator(a);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
@@ -94,14 +93,14 @@ class b3JSI {
         integrator.initiateScan();
     }
 
-    @JavascriptInterface
+    @org.xwalk.core.JavascriptInterface
     public boolean saveTransactions(String txString) {
         String transaction_store_file_name = getStorageFileName(c);
         writeToFile(txString, c, transaction_store_file_name);
         return true;
     }
 
-    @JavascriptInterface
+    @org.xwalk.core.JavascriptInterface
     public String getTransactions() {
         String serialized_transactions;
         String transaction_store_file_name = getStorageFileName(c);
@@ -109,7 +108,7 @@ class b3JSI {
         return serialized_transactions;
     }
 
-    @JavascriptInterface
+    @org.xwalk.core.JavascriptInterface
     public String getExplorerPrefix(String path) {
         SharedPreferences pref = c.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String node_from_prefs = pref.getString("current_node", "Mainnet (Infura)");

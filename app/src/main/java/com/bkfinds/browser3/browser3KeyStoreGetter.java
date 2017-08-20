@@ -4,7 +4,6 @@ package com.bkfinds.browser3;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.webkit.JavascriptInterface;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -25,7 +24,7 @@ class browser3KeyStoreGetter {
         thisContext = c;
     }
 
-    @JavascriptInterface
+    @org.xwalk.core.JavascriptInterface
     public String getKeyStore() {
         String serialized_key_store;
         String keystore_file_name = getKeystoreFileName(thisContext);

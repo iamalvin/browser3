@@ -25,6 +25,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import org.xwalk.core.XWalkCookieManager;
 import org.xwalk.core.XWalkNavigationHistory;
+import org.xwalk.core.XWalkSettings;
 import org.xwalk.core.XWalkView;
 
 import java.util.regex.Matcher;
@@ -57,12 +58,16 @@ public class MainActivity extends AppCompatActivity {
         loadingTxt = (TextView) findViewById(R.id.loadingtxt);
 
         webView = (XWalkView) findViewById(R.id.goView);
-        webView.getSettings().setJavaScriptEnabled(true);
+        XWalkSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+
 
         XWalkCookieManager xCookieManager = new XWalkCookieManager();
         xCookieManager.setAcceptCookie(true);
         xCookieManager.setAcceptFileSchemeCookies(true);
 
+
+        webView.addJavascriptInterface(new ProviderEngine(this), "browser3Engine");
         webView.addJavascriptInterface(new browser3KeyStoreGetter(this), "browser3KeyStoreGetter");
         webView.addJavascriptInterface(new browser3FullKeyStore(this), "browser3FullKeyStore");
         webView.addJavascriptInterface(new b3JSI(this), "b3JSI");

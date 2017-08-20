@@ -20,7 +20,7 @@ class Browser3ResourceClient extends XWalkResourceClient {
     private static final String LOG_TAG;
 
     static {
-        LOG_TAG = "Browser3";
+        LOG_TAG = "Browser3_resource";
     }
 
     private TextView loadingTxt;
@@ -43,6 +43,8 @@ class Browser3ResourceClient extends XWalkResourceClient {
 
         loadingBar.setProgress(progress);
 
+        Log.d(LOG_TAG, new Integer(progress).toString());
+
         if (progress == 100) {
             loadingBar.setVisibility(ProgressBar.GONE);
             loadingTxt.setVisibility(View.GONE);
@@ -51,11 +53,7 @@ class Browser3ResourceClient extends XWalkResourceClient {
 
     @Override
     public void onLoadStarted(XWalkView view, String url) {
-        if (url.equals("file:///android_asset/html/wallet.html")) {
-            ((EditText) ((Activity) c).findViewById(R.id.editURL)).setText(R.string.edit_url_hint);
-        } else {
-            ((EditText) ((Activity) c).findViewById(R.id.editURL)).setText(url);
-        }
+        Log.d(LOG_TAG, "loading starting");
 
         String providerString;
         providerString = "";
@@ -92,9 +90,13 @@ class Browser3ResourceClient extends XWalkResourceClient {
     @Override
     public void onLoadFinished(XWalkView view, String url) {
         Log.d("url page", url);
-        if (url.equals("file:///android_asset/html/wallet.html")) {
+        String sourceURL = view.getOriginalUrl();
+
+        if (sourceURL.equals("file:///android_asset/html/wallet.html")) {
+            ((EditText) ((Activity) c).findViewById(R.id.editURL)).setText(R.string.edit_url_hint);
             Log.d("wallet", "YES");
         } else {
+            ((EditText) ((Activity) c).findViewById(R.id.editURL)).setText(sourceURL);
             Log.d("wallet", "NO");
         }
         super.onLoadFinished(view, url);

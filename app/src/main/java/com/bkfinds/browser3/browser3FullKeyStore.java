@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
+
+import org.xwalk.core.XWalkView;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -24,7 +24,7 @@ class browser3FullKeyStore {
     private Context thisContext;
     private AppCompatActivity a;
     private Context c;
-    private WebView webView;
+    private XWalkView webView;
 
     browser3FullKeyStore(AppCompatActivity parent_activity) {
         a = parent_activity;
@@ -32,7 +32,7 @@ class browser3FullKeyStore {
         thisContext = c;
     }
 
-    @JavascriptInterface
+    @org.xwalk.core.JavascriptInterface
     public String getKeyStore() {
         String serialized_key_store;
         String keystore_file_name = getKeystoreFileName(thisContext);
@@ -40,11 +40,11 @@ class browser3FullKeyStore {
         return serialized_key_store;
     }
 
-    @JavascriptInterface
+    @org.xwalk.core.JavascriptInterface
     public Boolean saveKeyStore(final String serialized_key_store) {
         a.runOnUiThread(new Runnable() {
             public void run() {
-                webView = (WebView) a.findViewById(R.id.goView);
+                webView = (XWalkView) a.findViewById(R.id.goView);
                 String url = webView.getUrl();
 
                 if (!url.equals("file:///android_asset/html/wallet.html")) {

@@ -4,10 +4,6 @@ import android.content.Context;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
-/**
- * Created by alvin on 06/08/2017.
- */
-
 class web3Provider {
     private Context c;
     private MainActivity m;
