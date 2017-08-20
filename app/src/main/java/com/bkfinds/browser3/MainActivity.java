@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,57 +23,98 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import org.xwalk.core.XWalkCookieManager;
+import org.xwalk.core.XWalkInitializer;
 import org.xwalk.core.XWalkNavigationHistory;
 import org.xwalk.core.XWalkSettings;
+import org.xwalk.core.XWalkUpdater;
 import org.xwalk.core.XWalkView;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements XWalkInitializer.XWalkInitListener, XWalkUpdater.XWalkUpdateListener {
     public static final String PREFS_NAME = "browser3_main_prefs";
-    final Context b3 = this;
 
+    final Context b3 = this;
     EditText editURL;
-    XWalkView webView;
     ProgressBar loadingBar;
     TextView loadingTxt;
+    private XWalkInitializer xWalkInitializer;
+    private XWalkUpdater xWalkUpdater;
+    private XWalkView webView;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        ActionBar actionBar = getSupportActionBar();
-
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-
 
         loadingBar = (ProgressBar) findViewById(R.id.loadingbar);
         loadingTxt = (TextView) findViewById(R.id.loadingtxt);
 
+        setContentView(R.layout.activity_main);
+
+        xWalkInitializer = new XWalkInitializer(this, this);
+        xWalkInitializer.initAsync();
+
         webView = (XWalkView) findViewById(R.id.goView);
-        XWalkSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-
-
-        XWalkCookieManager xCookieManager = new XWalkCookieManager();
-        xCookieManager.setAcceptCookie(true);
-        xCookieManager.setAcceptFileSchemeCookies(true);
-
 
         webView.addJavascriptInterface(new ProviderEngine(this), "browser3Engine");
         webView.addJavascriptInterface(new browser3KeyStoreGetter(this), "browser3KeyStoreGetter");
         webView.addJavascriptInterface(new browser3FullKeyStore(this), "browser3FullKeyStore");
         webView.addJavascriptInterface(new b3JSI(this), "b3JSI");
 
-        webView.setUserAgentString(getString(R.string.userAgentString));
         webView.setResourceClient(new Browser3ResourceClient(webView));
         webView.setUIClient(new Browser3UIClient(webView));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Try to initialize again when the user completed updating and
+        // returned to current activity. The initAsync() will do nothing if
+        // the initialization is proceeding or has already been completed.
+
+        xWalkInitializer.initAsync();
+    }
+
+    @Override
+    public void onXWalkInitStarted() {
+    }
+
+    @Override
+    public void onXWalkInitCancelled() {
+        // Perform error handling here
+        finish();
+    }
+
+    @Override
+    public void onXWalkInitFailed() {
+        if (xWalkUpdater == null) {
+            xWalkUpdater = new XWalkUpdater(this, this);
+        }
+        xWalkUpdater.updateXWalkRuntime();
+    }
+
+    @Override
+    public void onXWalkUpdateCancelled() {
+        // Perform error handling here
+        finish();
+    }
+
+
+    @Override
+    public void onXWalkInitCompleted() {
+
+        XWalkSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+
+        XWalkCookieManager xCookieManager = new XWalkCookieManager();
+        xCookieManager.setAcceptCookie(true);
+        xCookieManager.setAcceptFileSchemeCookies(true);
+
+        webView.setUserAgentString(getString(R.string.userAgentString));
 
         final String walletURL = getString(R.string.walletURL);
 
@@ -94,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                     String prefix = "https://duckduckgo.com/?q=";
                     url = prefix + url.replace(" ", "+");
                 }
-                webView.load(url, null);
+                webView.loadUrl(url);
             }
         });
 
@@ -103,12 +143,36 @@ public class MainActivity extends AppCompatActivity {
         walletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                webView.load(walletURL, null);
+                webView.loadUrl(walletURL);
             }
         });
 
-        webView.load(walletURL, null);
+        webView.loadUrl(walletURL);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Scanned: " + result.toString(), Toast.LENGTH_LONG).show();
+                String address;
+                String setAddresses;
+
+                if (result.getContents().startsWith("ethereum:")) {
+                    address = result.getContents().replace("ethereum:", "");
+                    setAddresses = "Javascript:$('.toAddress').val('" + address + "')";
+                    webView.loadUrl(setAddresses);
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -126,27 +190,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() == null) {
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "Scanned: " + result.toString(), Toast.LENGTH_LONG).show();
-                String address;
-                String setAddresses;
-
-                if (result.getContents().startsWith("ethereum:")) {
-                    address = result.getContents().replace("ethereum:", "");
-                    setAddresses = "Javascript:$('.toAddress').val('" + address + "')";
-                    webView.load(setAddresses, null);
-                }
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
 
 
     @Override
@@ -171,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                         String node_from_prefs = pref.getString("current_node", nodes[0].toString());
                         Toast.makeText(b3, node_from_prefs, Toast.LENGTH_SHORT).show();
 
-                        webView.load("javascript:window.location.reload();", null);
+                        webView.loadUrl("javascript:window.location.reload();");
                     }
                 });
                 builder.show();
@@ -186,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
     private void attachScriptFile(XWalkView view, String src, String id) {
         Log.d("script being attached", id);
         Log.d("script source", src);
-        view.load(
+        view.loadUrl(
                 "javascript:" + "(function (){ " +
                         "var parent = document.getElementsByTagName('head').item(0);" +
                         "var script = document.createElement('script');" +

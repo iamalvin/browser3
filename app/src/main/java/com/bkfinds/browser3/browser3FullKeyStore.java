@@ -1,9 +1,7 @@
 package com.bkfinds.browser3;
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import org.xwalk.core.XWalkView;
@@ -22,11 +20,11 @@ import static android.content.Context.MODE_PRIVATE;
 class browser3FullKeyStore {
     private static final String PREFS_NAME = "browser3_main_prefs";
     private Context thisContext;
-    private AppCompatActivity a;
+    private MainActivity a;
     private Context c;
     private XWalkView webView;
 
-    browser3FullKeyStore(AppCompatActivity parent_activity) {
+    browser3FullKeyStore(MainActivity parent_activity) {
         a = parent_activity;
         c = parent_activity.getBaseContext();
         thisContext = c;

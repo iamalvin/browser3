@@ -500,36 +500,9 @@ browser3.gettingAddressesEvent = browser3.makeEvent("getting addresses");
 
 browser3.keystoreLoaded = browser3.loadKeystoreFromStorage();
 
-function fixScriptsSoTheyAreExecuted(el) {
-    var scripts = el.querySelectorAll('script'),
-    script, fixedScript, i, len;
-
-    for (i = 0, len = scripts.length; i < len; i++) {
-        script = scripts[i];
-        if (script.id != "browser3Bundle"){
-            fixedScript = document.createElement('script');
-
-            fixedScript.type = script.type;
-            if (script.innerHTML) {
-                fixedScript.innerHTML = script.innerHTML;
-            } else {
-                fixedScript.src = script.src;
-            }
-            fixedScript.async = false;
-
-            script.parentNode.replaceChild(fixedScript, script);
-        }
-    }
-}
-
-alert('attached');
-
 if(browser3.keystoreLoaded){
-//    var htmldoc = document.getElementsByTagName("html")[0];
-//    fixScriptsSoTheyAreExecuted(htmldoc);
     browser3.getAddressesInfo();
     window.setInterval(browser3.getAddressesInfo, 15000);
-
 } else {
     alert("Welcome!. as no keystore is available, generate an anonymous account to continue browsing, use the wallet button below.")
 }

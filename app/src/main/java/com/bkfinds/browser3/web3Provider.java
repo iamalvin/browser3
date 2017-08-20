@@ -1,8 +1,9 @@
 package com.bkfinds.browser3;
 
 import android.content.Context;
-import android.webkit.JavascriptInterface;
 import android.widget.Toast;
+
+import org.xwalk.core.JavascriptInterface;
 
 class web3Provider {
     private Context c;

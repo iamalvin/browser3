@@ -3,7 +3,6 @@ package com.bkfinds.browser3;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,10 +24,10 @@ import static android.content.Context.MODE_PRIVATE;
 
 class b3JSI {
     private static final String PREFS_NAME = "browser3_main_prefs";
-    private AppCompatActivity a;
+    private MainActivity a;
     private Context c;
 
-    b3JSI(AppCompatActivity parent_activity) {
+    b3JSI(MainActivity parent_activity) {
         a = parent_activity;
         c = parent_activity.getBaseContext();
     }
@@ -48,7 +47,8 @@ class b3JSI {
 
                     String notification_title = "Bal: " + balance + " Coinbase: " + truncated_address;
 
-                    ActionBar actionbar = a.getSupportActionBar();
+                    ActionBar actionbar;
+                    actionbar = a.getSupportActionBar();
 
                     if (actionbar != null) {
                         if (!actionbar.isShowing()) {
@@ -120,8 +120,7 @@ class b3JSI {
         //node_explorer_map.put("Kovan (Infura)", "https://kovan.etherscan.io");
 
         String explorer_prefix = node_explorer_map.get(node_from_prefs);
-        String explorer = explorer_prefix + path;
-        return explorer;
+        return explorer_prefix + path;
     }
 
     private String getStorageFileName(Context context) {
@@ -134,8 +133,7 @@ class b3JSI {
         node_store_map.put("Rinkeby (Infura)", "rinkebyWalletTransactionStore");
         //node_store_map.put("Kovan (Infura)", "kovanWalletTransactionStore");
 
-        String file_name = node_store_map.get(node_from_prefs);
-        return file_name;
+        return node_store_map.get(node_from_prefs);
     }
 
     private String getFromFile(Context context, String file_name) {

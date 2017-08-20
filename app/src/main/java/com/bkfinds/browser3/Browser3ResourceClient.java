@@ -23,6 +23,7 @@ class Browser3ResourceClient extends XWalkResourceClient {
         LOG_TAG = "Browser3_resource";
     }
 
+    final String finalProviderString;
     private TextView loadingTxt;
     private ProgressBar loadingBar;
     private Context c;
@@ -32,28 +33,6 @@ class Browser3ResourceClient extends XWalkResourceClient {
         c = webView.getContext();
         loadingBar = (ProgressBar) ((Activity) c).findViewById(R.id.loadingbar);
         loadingTxt = (TextView) ((Activity) c).findViewById(R.id.loadingtxt);
-    }
-
-    @Override
-    public void onProgressChanged(XWalkView view, int progress) {
-        if (progress < 100 && loadingBar.getVisibility() == ProgressBar.GONE) {
-            loadingBar.setVisibility(ProgressBar.VISIBLE);
-            loadingTxt.setVisibility(View.VISIBLE);
-        }
-
-        loadingBar.setProgress(progress);
-
-        Log.d(LOG_TAG, new Integer(progress).toString());
-
-        if (progress == 100) {
-            loadingBar.setVisibility(ProgressBar.GONE);
-            loadingTxt.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onLoadStarted(XWalkView view, String url) {
-        Log.d(LOG_TAG, "loading starting");
 
         String providerString;
         providerString = "";
@@ -77,12 +56,47 @@ class Browser3ResourceClient extends XWalkResourceClient {
         }
 
 
-        view.evaluateJavascript(providerString, new ValueCallback<String>() {
+        finalProviderString = providerString;
+    }
+
+    @Override
+    public void onProgressChanged(XWalkView view, int progress) {
+        if (progress < 100 && loadingBar.getVisibility() == ProgressBar.GONE) {
+            loadingBar.setVisibility(ProgressBar.VISIBLE);
+            loadingTxt.setVisibility(View.VISIBLE);
+        }
+
+        loadingBar.setProgress(progress);
+
+        Log.d(LOG_TAG, new Integer(progress).toString());
+
+        if (progress == 100) {
+            loadingBar.setVisibility(ProgressBar.GONE);
+            loadingTxt.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onLoadStarted(final XWalkView view, String url) {
+
+        view.evaluateJavascript("(function(){ return !window.web3 })();", new ValueCallback<String>() {
             @Override
-            public void onReceiveValue(String scriptResult) {
-                Log.d(LOG_TAG, "Inject JS result: " + scriptResult);
+            public void onReceiveValue(String value) {
+                Log.d(LOG_TAG, "check for web3 result: " + value);
+
+                if (value.equalsIgnoreCase("true")) {
+                    view.evaluateJavascript(finalProviderString, new ValueCallback<String>() {
+                        @Override
+                        public void onReceiveValue(String scriptResult) {
+                            Log.d(LOG_TAG, "Inject JS result: " + scriptResult);
+                        }
+                    });
+                } else {
+                    Log.d(LOG_TAG, " already loaded not injected");
+                }
             }
         });
+
 
         super.onLoadStarted(view, url);
     }
