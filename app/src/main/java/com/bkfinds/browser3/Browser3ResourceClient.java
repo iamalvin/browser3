@@ -1,0 +1,103 @@
+package com.bkfinds.browser3;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.util.Log;
+import android.view.View;
+import android.webkit.ValueCallback;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import org.xwalk.core.XWalkResourceClient;
+import org.xwalk.core.XWalkView;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+class Browser3ResourceClient extends XWalkResourceClient {
+    private static final String LOG_TAG;
+
+    static {
+        LOG_TAG = "Browser3";
+    }
+
+    private TextView loadingTxt;
+    private ProgressBar loadingBar;
+    private Context c;
+
+    Browser3ResourceClient(XWalkView webView) {
+        super(webView);
+        c = webView.getContext();
+        loadingBar = (ProgressBar) ((Activity) c).findViewById(R.id.loadingbar);
+        loadingTxt = (TextView) ((Activity) c).findViewById(R.id.loadingtxt);
+    }
+
+    @Override
+    public void onProgressChanged(XWalkView view, int progress) {
+        if (progress < 100 && loadingBar.getVisibility() == ProgressBar.GONE) {
+            loadingBar.setVisibility(ProgressBar.VISIBLE);
+            loadingTxt.setVisibility(View.VISIBLE);
+        }
+
+        loadingBar.setProgress(progress);
+
+        if (progress == 100) {
+            loadingBar.setVisibility(ProgressBar.GONE);
+            loadingTxt.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onLoadStarted(XWalkView view, String url) {
+        if (url.equals("file:///android_asset/html/wallet.html")) {
+            ((EditText) ((Activity) c).findViewById(R.id.editURL)).setText(R.string.edit_url_hint);
+        } else {
+            ((EditText) ((Activity) c).findViewById(R.id.editURL)).setText(url);
+        }
+
+        String providerString;
+        providerString = "";
+        InputStream input;
+        AssetManager assetManager = c.getAssets();
+
+        try {
+            input = assetManager.open("js/browser3Bundle.eth-lightwallet.hooked-web3-provider.js");
+
+            int size = input.available();
+            byte[] buffer = new byte[size];
+            input.read(buffer);
+            input.close();
+
+            // byte buffer into a string
+            providerString = new String(buffer);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        view.evaluateJavascript(providerString, new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String scriptResult) {
+                Log.d(LOG_TAG, "Inject JS result: " + scriptResult);
+            }
+        });
+
+        super.onLoadStarted(view, url);
+    }
+
+    @Override
+    public void onLoadFinished(XWalkView view, String url) {
+        Log.d("url page", url);
+        if (url.equals("file:///android_asset/html/wallet.html")) {
+            Log.d("wallet", "YES");
+        } else {
+            Log.d("wallet", "NO");
+        }
+        super.onLoadFinished(view, url);
+
+    }
+}

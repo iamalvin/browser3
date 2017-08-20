@@ -1,30 +1,19 @@
 package com.bkfinds.browser3;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.JsPromptResult;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -34,8 +23,10 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.io.IOException;
-import java.io.InputStream;
+import org.xwalk.core.XWalkCookieManager;
+import org.xwalk.core.XWalkNavigationHistory;
+import org.xwalk.core.XWalkView;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     final Context b3 = this;
 
     EditText editURL;
-    WebView webView;
+    XWalkView webView;
     ProgressBar loadingBar;
     TextView loadingTxt;
 
@@ -65,177 +56,22 @@ public class MainActivity extends AppCompatActivity {
         loadingBar = (ProgressBar) findViewById(R.id.loadingbar);
         loadingTxt = (TextView) findViewById(R.id.loadingtxt);
 
-        webView = (WebView) findViewById(R.id.goView);
+        webView = (XWalkView) findViewById(R.id.goView);
         webView.getSettings().setJavaScriptEnabled(true);
 
-        CookieManager cookieManager = CookieManager.getInstance();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookieManager.setAcceptThirdPartyCookies(webView, true);
-        } else {
-            cookieManager.setAcceptCookie(true);
-        }
+        XWalkCookieManager xCookieManager = new XWalkCookieManager();
+        xCookieManager.setAcceptCookie(true);
+        xCookieManager.setAcceptFileSchemeCookies(true);
 
         webView.addJavascriptInterface(new browser3KeyStoreGetter(this), "browser3KeyStoreGetter");
         webView.addJavascriptInterface(new browser3FullKeyStore(this), "browser3FullKeyStore");
         webView.addJavascriptInterface(new b3JSI(this), "b3JSI");
 
-        webView.setWebChromeClient(new WebChromeClient() {
+        webView.setUserAgentString(getString(R.string.userAgentString));
+        webView.setResourceClient(new Browser3ResourceClient(webView));
+        webView.setUIClient(new Browser3UIClient(webView));
 
-            public void onProgressChanged(WebView view, int progress) {
-                if (progress < 100 && loadingBar.getVisibility() == ProgressBar.GONE) {
-                    loadingBar.setVisibility(ProgressBar.VISIBLE);
-                    loadingTxt.setVisibility(View.VISIBLE);
-                }
-
-                loadingBar.setProgress(progress);
-                if (progress == 100) {
-                    loadingBar.setVisibility(ProgressBar.GONE);
-                    loadingTxt.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
-                if (defaultValue.equalsIgnoreCase("password")) {
-
-                    final LayoutInflater factory = LayoutInflater.from(b3);
-                    final View pass_dialog_view = factory.inflate(R.layout.js_prompt_dialog, null);
-
-                    ((EditText) pass_dialog_view.findViewById(R.id.pass_put)).setText("");
-
-
-                    new AlertDialog.Builder(b3)
-                            .setView(pass_dialog_view)
-                            .setTitle(message)
-                            .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    String value = ((EditText) pass_dialog_view.findViewById(R.id.pass_put)).getText().toString();
-                                    result.confirm(value);
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    result.cancel();
-                                }
-                            })
-                            .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                @Override
-                                public void onCancel(DialogInterface dialog) {
-                                    result.cancel();
-                                }
-                            })
-                            .show();
-                    return true;
-                } else if (defaultValue.equalsIgnoreCase("confirmation")) {
-
-                    final LayoutInflater factory = LayoutInflater.from(b3);
-                    final View confirm_dialog_view = factory.inflate(R.layout.js_custom_prompt_dialog, null);
-
-                    ((EditText) confirm_dialog_view.findViewById(R.id.confirmation_input)).setText("");
-                    ((TextView) confirm_dialog_view.findViewById(R.id.confirmation_info)).setText(message);
-
-                    new AlertDialog.Builder(b3)
-                            .setView(confirm_dialog_view)
-                            .setTitle("Type 'yes' to confirm transaction.")
-                            .setPositiveButton("Yes, continue.", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    String value = ((EditText) confirm_dialog_view.findViewById(R.id.confirmation_input)).getText().toString();
-                                    result.confirm(value);
-                                }
-                            })
-                            .setNegativeButton("Undo this.", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    result.cancel();
-                                }
-                            })
-                            .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                @Override
-                                public void onCancel(DialogInterface dialog) {
-                                    result.cancel();
-                                }
-                            })
-                            .show();
-                    return true;
-                } else {
-                    return super.onJsPrompt(view, url, message, defaultValue, result);
-                }
-            }
-
-        });
-
-
-        final String walletURL = "file:///android_asset/html/wallet.html";
-
-        webView.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                if (url.equals("file:///android_asset/html/wallet.html")) {
-                    ((EditText) findViewById(R.id.editURL)).setText("Enter dapp url here.");
-                } else {
-                    ((EditText) findViewById(R.id.editURL)).setText(url);
-                }
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                Log.d("url page", url);
-                if (url.equals("file:///android_asset/html/wallet.html")) {
-                    Log.d("wallet", "YES");
-                } else {
-                    Log.d("wallet", "NO");
-                    attachScriptFile(view, "https://com.bkfinds.browser3/android_asset/js/browser3Bundle.js", "browser3Bundle");
-                }
-            }
-
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    if (request.getUrl().toString().equals("https://com.bkfinds.browser3/android_asset/js/browser3Bundle.js")) {
-                        Log.d("resource intercepted", "true");
-                        try {
-                            InputStream input;
-                            input = getAssets().open("js/browser3Bundle.eth-lightwallet.hooked-web3-provider.js");
-
-                            return new WebResourceResponse("text/javascript", "UTF-8", input);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        return null;
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            @TargetApi(20)
-            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                    if (url.equals("https://com.bkfinds.browser3/android_asset/js/browser3Bundle.js")) {
-                        try {
-                            InputStream input;
-                            input = getAssets().open("js/browser3Bundle.eth-lightwallet.hooked-web3-provider.js");
-                            input.read();
-                            input.close();
-
-                            return new WebResourceResponse("text/javascript", "UTF-8", input);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        return super.shouldInterceptRequest(view, url);
-                    }
-                }
-                return null;
-            }
-        });
-
+        final String walletURL = getString(R.string.walletURL);
 
         Button goButton = (Button) findViewById(R.id.goButton);
         editURL = (EditText) findViewById(R.id.editURL);
@@ -253,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     String prefix = "https://duckduckgo.com/?q=";
                     url = prefix + url.replace(" ", "+");
                 }
-                webView.loadUrl(url);
+                webView.load(url, null);
             }
         });
 
@@ -262,17 +98,17 @@ public class MainActivity extends AppCompatActivity {
         walletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                webView.loadUrl(walletURL);
+                webView.load(walletURL, null);
             }
         });
 
-        webView.loadUrl(walletURL);
+        webView.load(walletURL, null);
     }
 
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack();
+        if (webView.getNavigationHistory().canGoBack()) {
+            webView.getNavigationHistory().navigate(XWalkNavigationHistory.Direction.BACKWARD, 1);
         } else {
             super.onBackPressed();
         }
@@ -299,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 if (result.getContents().startsWith("ethereum:")) {
                     address = result.getContents().replace("ethereum:", "");
                     setAddresses = "Javascript:$('.toAddress').val('" + address + "')";
-                    webView.loadUrl(setAddresses);
+                    webView.load(setAddresses, null);
                 }
             }
         } else {
@@ -330,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                         String node_from_prefs = pref.getString("current_node", nodes[0].toString());
                         Toast.makeText(b3, node_from_prefs, Toast.LENGTH_SHORT).show();
 
-                        webView.loadUrl("javascript:window.location.reload();");
+                        webView.load("javascript:window.location.reload();", null);
                     }
                 });
                 builder.show();
@@ -342,19 +178,19 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void attachScriptFile(WebView view, String src, String id) {
+    private void attachScriptFile(XWalkView view, String src, String id) {
         Log.d("script being attached", id);
         Log.d("script source", src);
-        view.loadUrl(
+        view.load(
                 "javascript:" + "(function (){ " +
                         "var parent = document.getElementsByTagName('head').item(0);" +
                         "var script = document.createElement('script');" +
                         "script.type='text/javascript';" +
                         "script.id='browser3Bundle';" +
-                        "script.src='https://com.bkfinds.browser3/android_asset/js/browser3Bundle.js';" +
+                        //"script.src='https://com.bkfinds.browser3/android_asset/js/browser3Bundle.js';" +
                         "parent.appendChild(script);" +
                         "})();"
-        );
+                , null);
     }
 
     private boolean isUrl(String text) {
@@ -362,10 +198,6 @@ public class MainActivity extends AppCompatActivity {
 
         Pattern p = Pattern.compile(URL_REGEX);
         Matcher m = p.matcher(text);
-        if (m.find()) {
-            return true;
-        } else {
-            return false;
-        }
+        return m.find();
     }
 }

@@ -1,11 +1,17 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    maven {
+        url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2'
+    }
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "com.bkfinds.browser3"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -21,11 +27,24 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.journeyapps:zxing-android-embedded:3.5.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'org.xwalk:xwalk_core_library:21.51.546.7'
     testCompile 'junit:junit:4.12'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'com.android.support') {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion '25.3.1'
+            }
+        }
+    }
 }

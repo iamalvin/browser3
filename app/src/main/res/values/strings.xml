@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Browser3</string>
     <string name="tavern_dice_app_url">https://taverndice.bkfinds.com</string>
+    <string name="edit_url_hint">Enter dapp url here.</string>
+    <string name="loading_text">Loading, please wait . . .</string>
+    <string name="goButton">Go</string>
+    <string name="walletButton">Wallet</string>
+    <string name="userAgentString">Browser3/1.0 Android</string>
+    <string name="walletURL">file:///android_asset/html/wallet.html</string>
 </resources>

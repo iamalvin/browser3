@@ -25,13 +25,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="-2dp"
-                android:text="Wallet" />
+                android:text="@string/walletButton" />
 
             <EditText
                 android:id="@+id/editURL"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:inputType="textUri"
                 android:maxLines="1" />
 
             <Button
@@ -39,12 +40,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="-2dp"
-                android:text="Go" />
+                android:text="@string/goButton" />
 
         </LinearLayout>
     </RelativeLayout>
 
-    <WebView
+    <org.xwalk.core.XWalkView
         android:id="@+id/goView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -59,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:padding="2dip"></ProgressBar>
+            android:padding="2dip" />
 
 
         <TextView
@@ -67,8 +68,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/loadingbar"
-            android:text="Loading, please wait . . ."
+            android:text="@string/loading_text"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#000000" />
-    </WebView>
+    </org.xwalk.core.XWalkView>
 </RelativeLayout>

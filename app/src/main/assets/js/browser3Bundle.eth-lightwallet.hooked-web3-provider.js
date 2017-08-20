@@ -521,10 +521,11 @@ function fixScriptsSoTheyAreExecuted(el) {
     }
 }
 
+alert('attached');
 
 if(browser3.keystoreLoaded){
-    var htmldoc = document.getElementsByTagName("html")[0];
-    fixScriptsSoTheyAreExecuted(htmldoc);
+//    var htmldoc = document.getElementsByTagName("html")[0];
+//    fixScriptsSoTheyAreExecuted(htmldoc);
     browser3.getAddressesInfo();
     window.setInterval(browser3.getAddressesInfo, 15000);
 
