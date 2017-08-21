@@ -6,13 +6,13 @@ It was built with a slightly modified (hooked-web3-provider and eth-lightwallet)
 I'm reachable at [alvin.browser3@gmail.com](mailto:alvin.browser3@gmail.com)
 
 ## For Users
-It's available on [the browser3 release page as an apk](https://github.com/iamalvin/browser3/releases/download/v0.0.4-alpha/browser3-v0.0.4-alpha.apk)
+The latest release is available on the [play store](https://play.google.com/apps/testing/com.bkfinds.browser3). Opt in to download.
+
+But if you're a developer, you can always build it yourself and select your own apk.
+
 Setup is easy, but we cannot retrieve your account if your password is lost, so BE CAREFUL.
 
 It is in testing.
-
-Again, in testing, so put little to no eth for transactions.
-
 
 ## If you're a developer
 It is built on:
