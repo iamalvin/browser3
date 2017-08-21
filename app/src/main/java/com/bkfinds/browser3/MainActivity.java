@@ -226,21 +226,6 @@ public class MainActivity extends AppCompatActivity implements XWalkInitializer.
         return true;
     }
 
-    private void attachScriptFile(XWalkView view, String src, String id) {
-        Log.d("script being attached", id);
-        Log.d("script source", src);
-        view.loadUrl(
-                "javascript:" + "(function (){ " +
-                        "var parent = document.getElementsByTagName('head').item(0);" +
-                        "var script = document.createElement('script');" +
-                        "script.type='text/javascript';" +
-                        "script.id='browser3Bundle';" +
-                        //"script.src='https://com.bkfinds.browser3/android_asset/js/browser3Bundle.js';" +
-                        "parent.appendChild(script);" +
-                        "})();"
-                , null);
-    }
-
     private boolean isUrl(String text) {
         final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
 

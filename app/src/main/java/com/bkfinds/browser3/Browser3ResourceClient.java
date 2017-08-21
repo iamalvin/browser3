@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
-import android.view.View;
 import android.webkit.ValueCallback;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -63,16 +62,14 @@ class Browser3ResourceClient extends XWalkResourceClient {
     public void onProgressChanged(XWalkView view, int progress) {
         if (progress < 100 && loadingBar.getVisibility() == ProgressBar.GONE) {
             loadingBar.setVisibility(ProgressBar.VISIBLE);
-            loadingTxt.setVisibility(View.VISIBLE);
+            //loadingTxt.setVisibility(View.VISIBLE);
         }
 
         loadingBar.setProgress(progress);
 
-        Log.d(LOG_TAG, new Integer(progress).toString());
-
         if (progress == 100) {
             loadingBar.setVisibility(ProgressBar.GONE);
-            loadingTxt.setVisibility(View.GONE);
+            //loadingTxt.setVisibility(View.GONE);
         }
     }
 

@@ -23,6 +23,28 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    splits {
+        abi {
+            enable true
+            reset()
+            include "x86", "armeabi-v7a"
+        }
+    }
+}
+
+ext.abiCodes = ['armeabi-v7a': 1, x86: 2]
+
+import com.android.build.OutputFile
+
+android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        def baseAbiVersionCode = project.ext.abiCodes.get(output.getFilter(OutputFile.ABI));
+
+        if (baseAbiVersionCode != null) {
+            output.versionCodeOverride = baseAbiVersionCode * 10000 + variant.versionCode
+        }
+
+    }
 }
 
 dependencies {
