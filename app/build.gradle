@@ -13,8 +13,8 @@ android {
         applicationId "com.bkfinds.browser3"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 101
-        versionName "1.0.101"
+        versionCode 102
+        versionName "1.0.102"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
