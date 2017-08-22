@@ -23,7 +23,7 @@ class Browser3ResourceClient extends XWalkResourceClient {
         LOG_TAG = "Browser3_resource";
     }
 
-    final String finalProviderString;
+    private final String finalProviderString;
     private TextView loadingTxt;
     private ProgressBar loadingBar;
     private Context c;
