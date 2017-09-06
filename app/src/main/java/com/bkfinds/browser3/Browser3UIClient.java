@@ -85,6 +85,10 @@ class Browser3UIClient extends XWalkUIClient {
                     })
                     .show();
             return true;
+        } else if (defaultValue.equalsIgnoreCase("modification, confirmation")) {
+            AlertDialog.Builder modifier = new ModifierDialog(c, message, result);
+            modifier.show();
+            return true;
         } else {
             return super.onJsPrompt(webView, url, message, defaultValue, result);
         }

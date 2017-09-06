@@ -39,15 +39,13 @@
 
 <div class="wallet container" id="wallet" style="display:none;">
     <div class="center-text center-content">
-        <h2>Full Address</h2>
+        <h2>My Address</h2>
         <div>
             <h4 id="coinbase"></h4>
             <div id="inGetAddress" class="address"></div>
+            <div id="transactions"></div>
         </div>
     </div>
-
-    <h3 class="center-text center-content">Last 10 transactions</h3>
-    <div class="pure-g transactions" id="transactions"></div>
 
     <div>
         <form class="pure-form pure-form-aligned bform">
@@ -165,7 +163,7 @@
 </div>
 
 <script id="browser3Bundle"
-        src="file:///android_asset/js/browser3Bundle.eth-lightwallet.hooked-web3-provider.js"
+        src="file:///android_asset/js/provider.min.js"
         type="text/javascript"></script>
 <script src="file:///android_asset/js/jquery.3.2.1.min.js" type="text/javascript"></script>
 <script src="file:///android_asset/js/wallet.js" type="text/javascript"></script>

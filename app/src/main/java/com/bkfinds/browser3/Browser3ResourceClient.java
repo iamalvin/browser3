@@ -40,7 +40,7 @@ class Browser3ResourceClient extends XWalkResourceClient {
         AssetManager assetManager = c.getAssets();
 
         try {
-            input = assetManager.open("js/browser3Bundle.eth-lightwallet.hooked-web3-provider.js");
+            input = assetManager.open(c.getString(R.string.providerURL));
 
             int size = input.available();
             byte[] buffer = new byte[size];
@@ -70,7 +70,7 @@ class Browser3ResourceClient extends XWalkResourceClient {
 
         if (progress == 100) {
             loadingBar.setVisibility(ProgressBar.GONE);
-            //loadingTxt.setVisibility(View.GONE);
+            loadingTxt.setVisibility(View.GONE);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.bkfinds.browser3;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
@@ -90,7 +91,8 @@ class b3JSI {
         integrator.setCameraId(0);  // Use a specific camera of the device
         integrator.setBeepEnabled(false);
         integrator.setBarcodeImageEnabled(true);
-        integrator.initiateScan();
+        Intent intent = integrator.createScanIntent();
+        a.startActivityForResult(intent, IntentIntegrator.REQUEST_CODE);
     }
 
     @org.xwalk.core.JavascriptInterface
