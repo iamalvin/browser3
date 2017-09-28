@@ -1,3 +1,7 @@
+#DEPRECATED
+App does not work, Tried new approach, see [Distro](https://github.com/iamalvin/distro)
+
+
 # browser3
 An ethreum dapps browser for mobile.
 
